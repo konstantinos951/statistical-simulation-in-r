@@ -1,0 +1,295 @@
+---
+title: "MAS458 ergasia 1"
+author: ' Konstantinos Evagorou , Alekos Liatsos, Savvas paraskevaidis  , Antreas
+  georgiou '
+date: "25-02-2026"
+output:
+  word_document: default
+  html_document: default
+  pdf_document: default
+---
+
+```{r}
+#fortonoume tis aparetites vivliothikes 
+rm(list = ls())
+library(rmutil) 
+library(moments) # gia skewness kai kurtosis 
+library(nortest) # elegxos kanonikotitas 
+```
+
+Άσκηση 1:
+Στο ακόλουθο chunk κατασκευάζουμε ένα function το οποίο δέχεται 2 θετικούς ακέραιους αριθμούς a, b με a < b και ακολούθως θα δημιουργεί ένα 6Χ6 πίνακα που θα περιέχει ως στοιχεία αριθμούς προσομοιωμένους με βάση  την ομοιόμορφη κατανομή στο διάστημα [a,b].
+Για να το πετύχουμε αυτό ονομάζουμε το function – dimiourgia_pinaka και το ορίζουμε να δέχεται δύο τιμές. Ελέγχουμε αν a < b και αν a & b θετικοί ακέραιοι  και ακολούθως δημιουργούμε τις τιμές του πίνακα, δηλαδή 36 στοιχεία, με την εντολή runif για προσομοίωση σύμφωνα με την συνεχή ομοιόμορφη κατανομή. Τέλος δημιουργό τον πίνακα matrixA με τις τιμές και εφαρμόζω τη συνάρτηση για δύο διαστήματα: [3,6] & [5,9].
+
+
+```{r}
+# function gia 6x6 pinaka 
+dimiourgia_pinaka = function(a, b) {
+  
+  #elegxos tis sinthkis a<b me minima lathous 
+  if(a >= b) {
+    stop('exeis dosei arihmous tetoious oste a>=b')
+  }
+  if(a <= 0 || b <= 0) {
+    stop("dose thetikous akereous arithmous")
+  }
+  if(a %% 1 !=0 || b %% 1 !=0) {
+    stop("dose thetikous akereous arithmous")
+  }
+  #paragoume 36 tixees times apo omoiomorfi katanomi 
+  values = runif(36, min = a, max = b)
+  #topothetoume times ston pinaka 
+  matrixA = matrix(values, nrow = 6, ncol = 6)
+  
+  return(matrixA)
+}
+
+#dokimi tou function gia 2 diastimata
+dimiourgia_pinaka(3,6)
+dimiourgia_pinaka(5,9)
+```
+
+Άσκηση 2:
+(α)
+Δημιουργούμε μια συνάρτηση (dianisma_2) η οποία αρχικά ελέγχει αν παίρνει ένα θετικό ακέραιο αριθμό. Σε περίπτωση λάθους αριθμού εμφανίζει τα κατάλληλα μηνύματα. 
+Στη συνέχεια πρέπει να δημιουργήσουμε ένα διάνυσμα το οποίο να περιέχει κατά αύξουσα σειρά όλους τους παράγοντες του αριθμού εκτός από το 1. Για να το πετύχουμε αυτό ορίζουμε ένα κενό διάνυσμα και στην ποριά κατασκευάζουμε επαναληπτικό βρόγχο που ελέγχει ένα-ένα τους αριθμούς από το 2 μέχρι τον αριθμό που παίρνει αν είναι διαιρέτες. Κάθε αριθμό που βρίσκει ως διαιρέτη τον βάζει στο διάνυσμα  και έτσι πετυχαίνουμε την αύξουσα σειρά στοιχείων. 
+
+```{r}
+#function gia evresi diereton 
+
+dianisma_2 =  function(a) {
+  #elegxos oti o arithmos a einai thetikos 
+if(a <= 0) {
+  stop("dose ena thetiko akereo")
+}
+ #elegxos oti a akereos 
+if(a %% 1 !=0 ) {
+  stop("dose akereo arithmo")
+}
+  dianisma = c() # keno dianisma pou tha valoume mesa tous dieretes 
+  
+  # elegxos zitoumenou 
+  for(i in 2:a) {
+    
+    if(a %% i == 0) {
+      # dimiourgoume to dianisma pou theloume me vasi ton elegxo 
+      #kai prosthetoume kathe i pou ikanopoiei ta zitoumena
+      dianisma <- c(dianisma, i)
+    }
+  }
+  return(dianisma) # epistrofi dianismatos 
+}
+```
+
+(β)
+Με βάση την συνάρτηση του πιο πάνω ερωτήματος εμφανίζουμε τα αποτελέσματα της συνάρτησης για a = 150,182,7. 
+Για να το πετύχουμε αυτό καλούμε την συνάρτηση dianisma_2(a) για τις τιμές του a που ζητούνται.  
+
+```{r}
+#euresi paragonton gia 3 arithmous ( 150 , 182, 7)
+dianisma_2(150)
+dianisma_2(182)
+dianisma_2(7)
+
+```
+
+(γ)
+Σε αυτό το ερώτημα στην περίπτωση περιττών αριθμών θέλουμε η συνάρτηση να μας δίνει μία επεξήγηση του τι περιμένουμε σαν παράγοντες του αριθμού.  
+Έτσι, προσθέτουμε στην πιο πάνω συνάρτηση ένα βρόχο if ο οποίος ελέγχει αν ο αριθμός  a είναι άρτιος ή περιττός με την χρήση modulο(αν amodulo2 άνισο του 0 τότε δεν είναι άρτιος).
+Μετά από τον έλεγχο ορίζουμε στην συνάρτηση να εμφανίζει τα κατάλληλα μηνύματα πριν δώσει το διάνυσμα.
+Μηνύματα: Ο αριθμός a είναι περιττός, συνεπώς όλοι οι παράγοντές του είναι περιττοί αριθμοί, αφού κανένας άρτιος αριθμός δεν μπορεί να τον διαιρέσει με υπόλοιπο 0. 
+Για επιβεβαίωση καλούμε την συνάρτηση για ένα άρτιο (28) και ένα περιττό αριθμό (27). Παρατηρούμε ότι τα μηνύματα εμφανίζονται μόνο στον περιττό αριθμό(27) πριν από το διάνυσμα, ενώ στον άρτιο (28) μας το δίνει απευθείας.
+
+```{r}
+# epanalipsi tou pio pano function me mia diafora 
+dianisma_2 =  function(a) {
+if(a <= 0) {
+  stop("dose ena thetiko akereo")
+}
+if(a %% 1 !=0 ) {
+  stop("dose akereo arithmo")
+}
+  #elegxos an o arithmos einai perittos kai dino ta aparetita minimata
+if(a %% 2 != 0){
+  cat("------------------------------------------------\n")
+    cat("o arithmos" , a , "einai perittos.\n")
+  cat("sinepos oloi oi paragontes tou einai perittoi arithmoi.\n")
+  cat("kanenas artios arithmos den mporei na to dieresei akrivos xoris na dosei ipolipo.\n")
+  cat("------------------------------------------------\n")
+}
+  dianisma = c()
+  
+  # elegxos zitoumenou 
+  for(i in 2:a) {
+    
+    if(a %% i == 0) {
+      # dimiourgoume to dianisma pou theloume me vasi ton elegxo  
+      dianisma <- c(dianisma, i)
+    }
+  }
+  return(dianisma)
+}
+# dokimi neou function gia ena artio kai ena peritto 
+dianisma_2(28)
+dianisma_2(27)
+```
+
+Άσκηση 3:
+(α)
+
+```{r}
+deigma = c(5, 5, 5, 5, 6, 6, 6, 6, 6, 8, 9, 9, 10, 11, 12, 13, 14)
+
+mhkos_deigmatos = length(deigma)
+
+# ipologismos mesis timis gia epiveveosi 
+mesh_timh = mean(deigma)
+mesh_timh
+
+#me summary perno apo tin R elaxisto megisto kai tetartimoria
+summary(deigma)
+```
+
+(β)
+
+```{r}
+# parousiasi ton grafimaton se mia gramh kai dio sthles 
+par(mfrow=c(1,2))
+
+#dimiourgia istogrammatos
+hist(deigma, main = "istogramma deigmatos",xlab="times", ylab="sixnotita")
+
+#dimiourgia boxplot
+boxplot(deigma, main = "thikogramma deigmatos", ylab="times")
+
+#orizo oti xriazome gia na vro to IQR ipologistika 
+Q1=6
+Q3=10
+IQR = Q3-Q1
+
+# ipologismos ton orion akreon timon 
+lower = Q1 - (1.5*IQR)
+upper = Q3 + ( 1.5*IQR)
+lower 
+upper 
+
+```
+
+Από το ιστόγραμμα βλέπουμε ότι η κατανομή δεν είναι συμμετρική, αφού οι περισσότερες τιμές συγκεντρώνονται  γύρο στο 5 και 6, ενώ υπάρχουν αρκετά μεγαλύτερες τιμές (10-14) που «τραβούν» την κατανομή προς τα δεξιά, έτσι υπάρχει ουρά προς τις μεγάλες τιμές.
+Από το boxplot και το summary τα τεταρτημόρια είναι:
+Q1 = 6 
+Q2 = 6 
+Q3 = 10 
+Παρατηρούμε ότι η διάμεσος ταυτίζεται με το Q1 και απέχει πολύ από το Q3. Επίσης το μεγαλύτερο μέρος τιμών βρίσκεται στο διάστημα 6-10.
+Το διάστημα μη ακραίων παρατηρήσεων δίνεται από το [Q1-(1.5*IQR), Q3 + ( 1.5*IQR)] όπου το IQR = Q3-Q1, που μας δίνεται από τον κώδικα ως [0,16]. Αφού το δείγμα μας κυμαίνεται από 5 ως 14  δεν υπάρχουν ακραίες παρατηρήσεις.
+
+
+(γ)
+Η εμπειρική συνάρτηση κατανομής δείχνει το ποσοστό των παρατηρήσεων που είναι μικρότερες ή ίσες για κάθε τιμή χ καθώς οι κάθετες γραμμές δείχνουν την ασυνέχεια της. 
+ 
+```{r}
+#empiriki sinartisi katanomis 
+plot.ecdf(deigma, verticals=TRUE, col.p="white", col.v="black", 
+          main="empiiriki sinartisi katanomis tou deigmatos")
+
+```
+
+Άσκηση 4:
+(β)
+
+```{r}
+set.seed(2) 
+
+student = rt(150, 4)
+
+#dimiourgia grafimatos ton dedomenon
+plot(student)
+
+#prosthiki orizontias grammis sti mesi timi 
+abline(h = mean(student), col = "red")
+
+```
+
+(γ)
+
+```{r} 
+# elegxos katanomis me parousiasi grafimaton san stoixeia enos pinaka 2x2
+par(mfrow=c(2,2))
+
+#istograma siggrisis me theortiki morfi
+hist(student, main = "Student t (df=4)", xlab="times", ylab="sixnotites")
+
+#boxplot gia elegxo simetrias kai akreon timon 
+boxplot(student, names = c("student"), ylab="times")
+
+ 
+#dhmiourgia theoritikon tetartimorion
+theoretical_quantiles = qt(seq(0,1,length.out=length(student)), df=4)
+
+# dimiourgia QQplot deigmatos me theoritiki katanomi
+qqplot(theoretical_quantiles,student, xlab = "Student sample", ylab="student deigmatos") 
+abline(0,1,col="red") 
+
+# empiriki sinartisi katanomis 
+plot.ecdf(student, verticals = TRUE, col.p = "white", col.v = "black", main = "ECDF Student", xlab="times", ylab="F(x)")
+
+# H0: to deigma proerxete apo student me 4 vathmous eleftherias 
+# elegxos Kolmogorov-Smirnof gia evresi p value 
+ks.test(student, "pt", df = 4)
+
+```
+
+Το ιστόγραμμα του δείγματος δείχνει ότι η κατανομή είναι περίπου συμμετρική γύρω από το 0, με τις περισσότερες τιμές ναι είναι μαζεμένες γύρω του. Παρατηρούμε ότι υπάρχουν παρατηρήσεις  που έχουν απόσταση μέχρι περίπου +/- 4 με 5, υποδεικνύοντας την ύπαρξη ουρών. Αυτή η μορφή είναι χαρακτηριστική της t-κατανομής (student) με μικρούς βαθμούς ελευθερίας, η οποία έχει πιο βαριές ουρές σε σύγκριση με την κανονική κατανομή.
+Το boxplot δείχνει ότι η διάμεσος βρίσκεται κοντά στο 0, τα τεταρτημόρια είναι περίπου συμμετρικά και υπάρχουν μερικές ακραίες τιμές (outliers). Η παρουσία ακράιων τιμών είναι αναμενόμενη στην t-κατανομή με 4 βαθμούς ελευθερίας, καθώς έχει πιο βαριές ουρές από την κανονική κατανομή.
+Στο Q-Q plot συγκρίνουμε το δείγμα μας με την κανονική κατανομή. Παρατηρούμε ότι τα σημεία αποκλίνουν από την ευθεία γραμμή, ιδιαίτερα στα άκρα. Αυτό σημαίνει ότι το δείγμα μας έχει βαρύτερες ουρές από την κανονική κατανομή. Η συμπεριφορά αυτή είναι χαρακτηριστική της t- κατανομής με λίγους βαθμούς ελευθερίας – όπως της t(4) που μελετάμε.
+Η εμπειρική συνάρτηση κατανομής (ECDF) δείχνει την αθροιστική πιθανότητα των τιμών του δείγματος. Η μορφή της είναι αναμενόμενη για μια συμμετρική συνεχής κατανομή, με απότομη αύξηση κοντά στο 0, όπου συγκεντρώνονται οι περισσότερες παρατηρήσεις. 
+Το test Kolmogorov-Smirnov συγκρίνει το δείγμα μας με την θεωρητική t-κατανομή με 4 βαθμούς ελευθερίας. Η μηδενική υπόθεση(H₀) είναι ότι το δείγμα μας προέρχεται από αυτή την κατανομή. 
+Από το test παίρνουμε:
+D = 0.12773
+p-value = 0.01498
+Το p-value = 0.01498 είναι μικρότερο απο 0.05.
+Από τα γραφήματα(ιστόγραμμα, boxplot, Q-Q plot, ECDF) παρατηρούμε ότι το δείγμα εμφανίζει τα βασικά χαρακτηριστικά της t-κατανομής με 4 βαθμούς ελευθερίας: 
+Συμμετρία γύρω από το 0 και βαρύτερες ουρές από την κανονική κατανομή.
+Όμως το test Kolmogorov-Smirnov δίνει p-value = 0.01498 < 0.05. Αυτό σημαίνει ότι απορρίπτουμε την υπόθεση ότι το δείγμα προέρχεται από την t (4) κατανομή. 
+Η διαφορά μπορεί να οφείλεται στο γεγονός ότι το δείγμα (n =150) είναι αρκετά μεγάλο και το test ανιχνεύει μικρές αποκλίσεις που δεν είναι εύκολα ορατές στα γραφήματα.
+Επομένως, με βάση το στατιστικό test, καταλήγουμε ότι το δείγμα δεν προέρχεται από την t-κατανομή με 4 βαθμούς ελευθερίας.
+
+(δ)
+
+
+```{r}
+#siggrisi theoritikou kai praktikou 
+theoritiko_skewness = 0 
+praktiko_skewness = skewness(student)
+cat("\n  theoritiki timi:", theoritiko_skewness)
+cat("\n  praktiki timi deigmatos:", praktiko_skewness)
+
+#siggrisi theoritikou kai praktikou 
+praktiko_kurtosis=kurtosis(student)
+cat("\n  theoritiki timi einai apirh afou gia 4 vathmous eleftherias o sintelestis kirtosis tinei sto apeiro ")
+cat("\n  praktiki timi apo deigma:", praktiko_kurtosis)
+
+#siggrisi theoritikou kai praktikou 
+theoritiko_var = 4/(4-2)
+praktiko_var = var(student)
+cat("\n theoritiki timi:", theoritiko_var)
+cat("\n praktiki timi apo deigma:", praktiko_var)
+
+#ipologismos ton diaforon
+diafora_skewness = abs(praktiko_skewness - 0)
+diafora_var = abs(praktiko_var - 2)
+
+# apotelesmata diaforon
+diafora_skewness
+diafora_var
+
+
+
+
+```
+
+
+Η κατανομή student είναι συμμετρική γύρω από το 0, επομένως η θεωρητική λοξότητα είναι μηδενική για n>3 και από τα αποτελέσματα στην R παρατηρώ ότι η πρακτική λοξότητα είναι 0.3578684. Συνεπώς έχουμε διαφορά μεταξύ θεωρητικού και πρακτικού αποτελέσματος, κάτι που είναι αναμενόμενο αφού το δείγμα μου είναι 150 μεταβλητές. Αν είχα μεγαλύτερο δείγμα θα είχα και πιο μικρή διαφορά, δηλαδή, όσο πιο μεγάλο δείγμα έχω, τόσο πιο κοντά θα είμαι στην θεωρητική τιμή. 
+Για την διασπορά, από τον θεωρητικό τύπο έχουμε ότι var(x)= 2 για 4 βαθμούς ελευθερίας, αφού δίνεται από τον τύπο Var(x)=n/(n-2). Η διασπορά που υπολογίζεται από τα αποτελέσματά μας είναι 1.76835, η οποία είναι αρκετά κοντά στη θεωρητική και η διαφορά είναι αναμενόμενη για ένα δείγμα με 150 παρατηρήσεις. Αν είχαμε άπειρο δείγμα τοτε θα προσεγγίζαμε τέλια την θεωρητική διασπορά της κατανομής.
+Στην κατανομή μας για 4 βαθμούς ελευθερίας, ο θεωρητικός αριθμός της κύρτωσης είναι άπειρο, όμως στο δείγμα μας είναι 5.3378. Αυτό δείχνει ότι η κατανομή έχει βαριές ουρές, δηλαδή έχει πιθανότητα εμφάνισης ακραίων τιμών. Δεν μπορούμε να συγκρίνουμε την θεωρητική μαζί με την πρακτική τιμή ενός δείγματος 150 τιμών, αφού η κύρτωση αυξάνεται όσο αυξάνεται το δείγμα.
+
